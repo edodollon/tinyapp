@@ -12,8 +12,11 @@ const urlDatabase = {
 };
 
 function generateRandomString() {
-  
+  const randString = Math.random().toString(36).slice(7);
+  return randString;
 }
+
+console.log(generateRandomString());
 
 app.get("/", (req, res) => {
   res.send("Hello!");
