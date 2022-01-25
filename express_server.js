@@ -1,3 +1,8 @@
+const generateRandomString = () => {
+  const randString = Math.random().toString(36).slice(7);
+  return randString;
+};
+
 const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
@@ -10,13 +15,6 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
-function generateRandomString() {
-  const randString = Math.random().toString(36).slice(7);
-  return randString;
-}
-
-console.log(generateRandomString());
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -45,8 +43,9 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  console.log(req.body.longURL);  // Log the POST request body to the console
+  urlDatabase[generateRandomString()] = req.body.longURL;
+  console.log(urlDatabase);
 });
 
 app.listen(PORT, () => {
