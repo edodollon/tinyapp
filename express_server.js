@@ -45,13 +45,19 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/:${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+// Delete URL from index page after clicking delete button
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect("/urls");
+})
 
 app.listen(PORT, () => {
   console.log(`Example app is listening on port ${PORT}!`);
