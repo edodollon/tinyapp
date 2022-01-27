@@ -30,6 +30,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -38,10 +39,15 @@ app.get("/urls/new", (req, res) => {
 })
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[shortURL] };
+  const shortURL = req.params.shortURL;
+  const templateVars = { 
+    shortURL: req.params['shortURL'],
+    longURL: urlDatabase[shortURL]
+  };
   res.render("urls_show", templateVars);
 });
 
+// Generate new URL and redirect to URL page
 app.post("/urls", (req, res) => {
   shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
@@ -57,7 +63,29 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
-})
+});
+
+// Edit URL
+app.get("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const templateVars = { 
+    shortURL: req.params['shortURL'],
+    longURL: urlDatabase[shortURL]
+  };
+  res.redirect(`/urls/${shortURL}`, templateVars);
+});
+
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  res.redirect(`/urls/${shortURL}`);
+});
+
+app.post("/urls/:shortURL/new", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const newURL = req.body.newURL;
+  urlDatabase[shortURL] = req.body.newURL;
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app is listening on port ${PORT}!`);
