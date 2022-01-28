@@ -18,6 +18,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// Registering new email and password
+app.get("/register", (req, res) => {
+  res.render("user_registration");
+})
+
 // Login
 app.post("/login", (req, res) => {
   const username = req.body.username;
