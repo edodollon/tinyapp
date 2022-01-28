@@ -33,7 +33,6 @@ const users = {
 
 const checkEmail = (emailCheck) => {
   for (const em in users) {
-    console.log('GGGGGG',users[em].email)
     if (users[em].email === emailCheck) {
       return false;
     }
@@ -50,12 +49,10 @@ app.post("/register", (req, res) => {
   const userRandID = shortURL = generateRandomString();
   
   if (req.body.email === '' || req.body.password === '') {
-    console.log('First if',users)
     res.sendStatus(400);
   }
   
   if (checkEmail(req.body.email) === false) {
-    console.log('Second if',users)
     res.sendStatus(400);
   } else {
     users[userRandID] = {
