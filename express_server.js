@@ -14,12 +14,24 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 // Databases
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+const users = {
+  aJ48lW: {
+    id: 'aJ48lW', 
+    email: 'temp@email.com',
+    password: 'password'
+  }
 };
 
-const users = {};
+const urlDatabase = {
+  "b2xVn2": { 
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "aJ48lW"
+  },
+  "9sm5xK": { 
+    longURL: "http://www.google.com",
+    userID: "aJ48lW"
+  }
+};
 
 const checkEmail = (emailCheck) => {
   for (const em in users) {
@@ -121,7 +133,7 @@ app.get("/urls/new", (req, res) => {
     user: req.cookies["user_id"],
     userDB: users,
   };
-  
+
   if (!req.cookies.user_id === true) {
     res.redirect("/login");
   } else {
@@ -144,13 +156,16 @@ app.get("/urls/:shortURL", (req, res) => {
 // Generate new URL and redirect to URL page
 app.post("/urls", (req, res) => {
   shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies["user_id"]
+  }
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
 });
 
 // Delete URL from index page after clicking delete button
@@ -168,7 +183,7 @@ app.get("/urls/:shortURL/edit", (req, res) => {
   };
   res.redirect(`/urls/${shortURL}`, templateVars);
 });
-
+  
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
@@ -177,7 +192,10 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 app.post("/urls/:shortURL/new", (req, res) => {
   const shortURL = req.params.shortURL;
   const newURL = req.body.newURL;
-  urlDatabase[shortURL] = req.body.newURL;
+  urlDatabase[shortURL] = {
+    longURL: newURL,
+    userID: req.cookies["user_id"]
+  }
   res.redirect("/urls");
 });
 
