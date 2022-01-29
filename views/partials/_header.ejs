@@ -10,7 +10,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div>
-        <% if (user === undefined) { %>
+        <% if (user === undefined || user === null) { %>
           <form action="/login" method="get">
             <input type="submit" value="login">
           </form>
