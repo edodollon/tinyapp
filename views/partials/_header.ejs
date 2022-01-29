@@ -10,16 +10,18 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div>
-        <% if (userDB[user].email !== undefined) { %>
+        <% if (user === undefined) { %>
+          <form action="/login" method="get">
+            <input type="submit" value="login">
+          </form>
+          <form action="/register" method="get">
+            <input type="submit" value="register">
+          </form>
+        <% } else {%>
           <form action="/logout" method="post">
-            <input type="submit" value="sign-out">
+            <input type="submit" value="logout">
           </form>
-          <p>Logged In As: <%= userDB[user].email %>!</p>
-        <% } else { %>
-          <form action="/login" method="post">
-            <input type="text" name="username" id="username">
-            <input type="submit" value="sign-in">
-          </form>
+          <p>Logged in as: <%= userDB[user].email %></p>
         <% } %>
       </div>
     </div>

@@ -13,27 +13,26 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+// Databases
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-}
+const users = {};
 
 const checkEmail = (emailCheck) => {
   for (const em in users) {
     if (users[em].email === emailCheck) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const checkPassword = (passCheck) => {
+  for (const em in users) {
+    if (users[em].password === passCheck) {
       return false;
     }
   }
@@ -46,14 +45,16 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const userRandID = shortURL = generateRandomString();
+  const userRandID = generateRandomString();
   
   if (req.body.email === '' || req.body.password === '') {
     res.sendStatus(400);
+    res.redirect("/urls");
   }
   
   if (checkEmail(req.body.email) === false) {
     res.sendStatus(400);
+    res.redirect("/urls");
   } else {
     users[userRandID] = {
       id: userRandID, 
@@ -68,10 +69,24 @@ app.post("/register", (req, res) => {
 
 
 // Login
+app.get("/login", (req, res) => {
+  res.render("user_login");
+});
+
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/urls");
+  const email = req.body.email;
+  const password = req.body.password;
+
+  for (const id in users) {
+    console.log('LOGIN USER-ID', users[id].id);
+    if (checkEmail(email) === false && checkPassword(password) === false) {
+      res.cookie("user_id", users[id].id);
+      res.redirect("/urls");
+    } else {
+      res.sendStatus(403);
+      res.redirect("/login");
+    }
+  }
 });
 
 // Logout
@@ -96,11 +111,12 @@ app.get("/urls", (req, res) => {
   const templateVars = { 
     user: req.cookies["user_id"],
     userDB: users,
-    urls: urlDatabase
+    urls: urlDatabase,
   };
   res.render("urls_index", templateVars);
 });
 
+// New URLS page
 app.get("/urls/new", (req, res) => {
   const templateVars = { 
     user: req.cookies["user_id"],
