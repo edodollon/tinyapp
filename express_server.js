@@ -78,7 +78,6 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
 
   for (const id in users) {
-    console.log('LOGIN USER-ID', users[id].id);
     if (checkEmail(email) === false && checkPassword(password) === false) {
       res.cookie("user_id", users[id].id);
       res.redirect("/urls");
@@ -122,8 +121,14 @@ app.get("/urls/new", (req, res) => {
     user: req.cookies["user_id"],
     userDB: users,
   };
-  res.render("urls_new", templateVars);
-})
+  
+  if (!req.cookies.user_id === true) {
+    res.redirect("/login");
+  } else {
+    res.render("urls_new", templateVars);
+  }
+  
+});
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
