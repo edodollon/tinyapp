@@ -6,9 +6,11 @@ Built by Jomel Edodollon as a first and introductory project within the LHL Boot
 
 ## Final Product
 
-!["screenshot description"](#)
+!["Main URLs page"](https://github.com/edodollon/tinyapp/blob/main/docs/urls-page.png?raw=true)
 
-!["screenshot description"](#)
+!["Logged into URLs"](https://github.com/edodollon/tinyapp/blob/main/docs/urls-logged-in.png?raw=true)
+
+!["Edit page"](https://github.com/edodollon/tinyapp/blob/main/docs/edit-page.png?raw=true)
 
 ## Dependencies
 
