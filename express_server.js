@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 const app = express();
 const PORT = 8080;
 
@@ -18,7 +20,7 @@ const users = {
   aJ48lW: {
     id: 'aJ48lW', 
     email: 'temp@email.com',
-    password: 'password'
+    password: bcrypt.hashSync("password", saltRounds)
   }
 };
 
@@ -57,11 +59,11 @@ const checkEmail = (emailCheck) => {
 
 const checkPassword = (passCheck) => {
   for (const em in users) {
-    if (users[em].password === passCheck) {
-      return false;
+    if (bcrypt.compareSync(passCheck, users[em].password)) {
+      return users[em].password;
     }
   }
-  return true;
+  return false;
 };
 
 // Registering new email and password
@@ -84,7 +86,7 @@ app.post("/register", (req, res) => {
     users[userRandID] = {
       id: userRandID, 
       email: req.body.email,
-      password: req.body.password 
+      password: bcrypt.hashSync(req.body.password, saltRounds) 
   };
     console.log(users);
     res.cookie("user_id", userRandID);
@@ -101,14 +103,19 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const userPass = checkPassword(password);
+  console.log('USERPASS', userPass);
 
   for (const id in users) {
-    if (checkEmail(email) === false && checkPassword(password) === false) {
-      res.cookie("user_id", users[id].id);
-      res.redirect("/urls");
+    if (checkEmail(email) === false) {
+      if (bcrypt.compareSync(password, userPass)) {
+        res.cookie("user_id", users[id].id);
+        res.redirect("/urls");
+      } else {
+        res.status(403).send("403 Forbidden: Wrong Password");
+      } 
     } else {
-      res.sendStatus(403);
-      res.redirect("/login");
+      res.status(403).send("403 Forbidden : Please Register");
     }
   }
 });
