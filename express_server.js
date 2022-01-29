@@ -33,6 +33,19 @@ const urlDatabase = {
   }
 };
 
+// Helper functions
+const urlsForUser = (idCheck) => {
+  const personalDB = {};
+
+  for (const id in urlDatabase) {
+    if (urlDatabase[id].userID === idCheck) {
+      personalDB[id] = urlDatabase[id];
+    }
+  }
+  console.log(personalDB);
+  return personalDB;
+};
+
 const checkEmail = (emailCheck) => {
   for (const em in users) {
     if (users[em].email === emailCheck) {
@@ -118,11 +131,12 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></html></body>\n");
 });
 
+// Index page
 app.get("/urls", (req, res) => {
   const templateVars = { 
     user: req.cookies["user_id"],
     userDB: users,
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies["user_id"]),
   };
   res.render("urls_index", templateVars);
 });
@@ -170,8 +184,15 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Delete URL from index page after clicking delete button
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (urlDatabase[req.params.shortURL].userID === req.params.shortURL) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("Not permitted");
+  }
+  
+  
+  
 });
 
 // Edit URL
